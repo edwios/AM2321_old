@@ -15,10 +15,11 @@ class AM2321 {
 public:
 	AM2321();
 	bool begin();
-	void Waken(void);
+	void WakeUp(void);
 	unsigned int readID();
 	float readTemperature(void);
 	float readHumidity(void);
+	unsigned long readAll(void);
 	void SendData(unsigned char buffer);
 	unsigned char ReceiveData();
 

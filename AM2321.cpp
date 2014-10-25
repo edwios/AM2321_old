@@ -259,7 +259,7 @@ unsigned char AM2321::CheckCRC(unsigned char *ptr,unsigned char len)
     before I2C stop.
 *************************************************/
 
-void AM2321::Waken(void)
+void AM2321::WakeUp(void)
 {
     I2C_Start();
     SendData(IIC_Add);        // Send device address
@@ -312,8 +312,7 @@ unsigned int AM2321::readID()
 
     Clear_Data();
     WR_Flag = 0;
-    Waken();
-
+    WakeUp();
     IIC_TX_Buffer[0] = 0x03;
     IIC_TX_Buffer[1] = 0x08;
     IIC_TX_Buffer[2] = 0x07;
@@ -339,12 +338,12 @@ float AM2321::readTemperature()
 
     Clear_Data();
     WR_Flag = 0;
-    Waken();
-    //Wait at least 2ms for device to response with data
+    WakeUp();
     IIC_TX_Buffer[0] = 0x03;
     IIC_TX_Buffer[1] = 0x00;
     IIC_TX_Buffer[2] = 0x04;
     if (WriteNByte(IIC_Add,IIC_TX_Buffer,3)) {
+        //Wait at least 2ms for device to response with data
         delayMicroseconds(2000);    
         ReadNByte(IIC_Add,IIC_RX_Buffer,8);
         digitalWrite(SSCL,1); digitalWrite(SSDA,1);
@@ -365,7 +364,7 @@ float AM2321::readHumidity()
     
     Clear_Data();
     WR_Flag = 0;
-    Waken();
+    WakeUp();
     IIC_TX_Buffer[0] = 0x03;
     IIC_TX_Buffer[1] = 0x00;
     IIC_TX_Buffer[2] = 0x04;
@@ -385,3 +384,34 @@ float AM2321::readHumidity()
     return humi;
 }
 
+/*************************************************
+    Read both temperature and humidity from AM2321 
+    Results returned as unsigned long
+    aaaabbbb where aaaa is the humidity*10 and
+    bbbb is temperature*10
+*************************************************/
+unsigned long AM2321::readAll()
+{
+    unsigned long m = 0;
+
+    Clear_Data();
+    WR_Flag = 0;
+    WakeUp();
+    IIC_TX_Buffer[0] = 0x03;
+    IIC_TX_Buffer[1] = 0x00;
+    IIC_TX_Buffer[2] = 0x04;
+    if (!WriteNByte(IIC_Add,IIC_TX_Buffer,3)) {
+        m = 0xFFFFFFFF;
+    } else {
+        //Wait at least 2ms for device to response with data
+        delayMicroseconds(2000);    
+        ReadNByte(IIC_Add,IIC_RX_Buffer,8);
+        digitalWrite(SSCL,1); digitalWrite(SSDA,1);
+        if (!WR_Flag) {
+            m = (IIC_RX_Buffer[2]<<24) + (IIC_RX_Buffer[3]<<16) + (IIC_RX_Buffer[4]<<8) + IIC_RX_Buffer[5];
+        } else {
+            m = 0xFFFFFFFF;
+        }
+    }
+    return  m;   
+}

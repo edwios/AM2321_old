@@ -28,21 +28,22 @@ void setup()
 
 void loop()
 {
-	float temp, humi;
-	unsigned int amID;
+	unsigned long result = 0;
+	unsigned int temp, humi = 0;
+	unsigned int amID = 0;
 
 	amID = am2321.readID();
-	delay(2000);
-	temp = am2321.readTemperature();
-	delay(2000);
-	humi = am2321.readHumidity();
+	delay(500);
+	result = am2321.readAll();
+	humi = result>>16;
+	temp = result&0xFFFF;
 
 	Serial.print("ID: ");
 	Serial.print(amID);
 	Serial.print(", Temp: ");
-	Serial.print(temp);
+	Serial.print(temp/10.0);
 	Serial.print(", Humi: ");
-	Serial.println(humi);
-	delay(2000);
+	Serial.println(humi/10.0);
+	delay(500);
 }
 

@@ -1,9 +1,13 @@
 /**************************************************************** 
   This is the Spark Core library for the AM2321 Humidity and Temperature sensor
 
-  This sensor uses I2C communication, 2 pins are required to connect to the Spark Core  
+  This sensor uses custom protocol based on the I2C communication
+  and supports both one and two wires configuration.
   
-  Written by Ed Wios.  
+  This Library only supports the 2 wires configuration.
+  
+  Written by Ed Wios.
+  Oct 2014
  ***************************************************************/
  
 #include "AM2321.h"

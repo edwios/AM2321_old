@@ -33,7 +33,7 @@ void loop()
 	unsigned int amID = 0;
 
 	amID = am2321.readID();
-	delay(500);
+	delay(2000);
 	result = am2321.readAll();
 	humi = result>>16;
 	temp = result&0xFFFF;
@@ -44,6 +44,6 @@ void loop()
 	Serial.print(temp/10.0);
 	Serial.print(", Humi: ");
 	Serial.println(humi/10.0);
-	delay(500);
+	delay(2000);
 }
 
